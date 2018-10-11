@@ -3,11 +3,17 @@
 	Tutorial que tiene como objetivo fortalecer conocimientos
 	sobre templates con argumentos.
 
-	Aclaraciones 
+	Aclaraciones
 	************
 	Cuando aparece templates con algo como template<class ...Args>
-	A veces  parece algo realmente feo a simple vista, pero cuando leemos una clase 
-	o funcion template en la que un argumento es algo como: template<typename T, class ...Args>
+	significa algo asi como un vector de elementos (de diferentes clases)
+
+	Ejemplo:
+	template<class ...Args>
+	class Base {};
+
+	Uso:
+	auto baseTest = Base<int, string, double, ObjetoA, ObjectoB>();
 
 */
 
@@ -17,31 +23,35 @@
 #include <array>
 #include <utility>
 
-template <std::size_t N, class T>
+template <std::size_t index, class T>
 struct miembro_base
 {
 	T value;
-	std::size_t size;
 	miembro_base()
 	{
-		size = N;
+		std::cout << index << std::endl;
 	}
 };
 
 template <class I, class ...Argumentos>
-struct double_base; // Predefinicion necesaria de double_base abajo utilizada
+struct doble_base; // Predefinicion necesaria de double_base abajo utilizada
 
 
-template <std::size_t... I, class ...Tail>
-struct double_base <std::index_sequence<I...>, Tail... >
-	: miembro_base<I, Tail>... // esta parte actua como un iterador sobre la secuencia de elementos ...Tail
+template <std::size_t... I, class ...Clases>
+struct doble_base <std::index_sequence<I...>, Clases... >
+	: miembro_base<I, Clases>... // esta parte actua como un iterador sobre la secuencia de elementos ...Tail
+{
+
+};
+
+template <class ...Valores>
+struct doble : doble_base<std::make_index_sequence<sizeof...(Valores)>, Valores...>
 {
 
 };
 
 int main(int argc, char *argv[])
 {
-	auto test_miembro_base = miembro_base<8,int>();
-	std::cout << test_miembro_base.size << std::endl;
+	auto test_double_base = doble<int, double, int, int>();
 	return 0;
 }
